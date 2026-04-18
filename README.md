@@ -25,24 +25,26 @@
 2. 用 Cursor **打开含 `.cursor/skills/` 的仓库根目录**。  
 3. 对话里可提：**AW**、**总调度**、**文案**、**脚本**、**详情**、**参数** 等；或说明「不知道从哪个开始」→ Agent 应优先参考 **`aw-hub`**。
 
-### 方式 B：个人全局（多 skill 时注意路径）
+### 方式 B：个人全局（推荐用脚本）
 
-子技能里的 `SKILL.md` 使用相对路径 **`../../../AW_品牌文案参考规则.md`**（相对于 **仓库根**）。若把整个 `.cursor/skills/` 拷到 `~/.cursor/skills/`，该相对路径会**失效**。
+子技能在项目里用 **`../../../AW_品牌文案参考规则.md`**；拷到 `~/.cursor/skills/` 后必须改成指向同目录下的规则软链，否则会断链。
 
-因此 **多技能场景优先用方式 A**；若必须全局，请：
-
-- 将本仓库 clone 到**固定绝对路径**，并把下面脚本里的 `REPO` 改成该路径后执行（为每个子目录放入规则软链，便于单文件引用；**`SKILL.md` 仍以仓库内为真源**，用 `cp` 同步更新）：
+在终端执行（路径按你本机 clone 位置改）：
 
 ```bash
-REPO="$HOME/path/to/aw-brand-ai-skill"
-for d in aw-hub aw-topic-brief aw-video-script aw-listing-creative aw-product; do
-  mkdir -p "$HOME/.cursor/skills/$d"
-  ln -sf "$REPO/AW_品牌文案参考规则.md" "$HOME/.cursor/skills/$d/AW_品牌文案参考规则.md"
-  cp "$REPO/.cursor/skills/$d/SKILL.md" "$HOME/.cursor/skills/$d/SKILL.md"
-done
+bash "/Users/young/TRAE SOLO/scripts/install-global-aw-skills.sh"
 ```
 
-（若你希望全局 `SKILL.md` 内链改为 `./AW_品牌文案参考规则.md`，可在拷贝后批量替换；需要时我可以再出一版「仅全局用」的 SKILL 变体。）
+脚本会：**删除全局 `awaiskill`**；把五个 `SKILL.md` 复制到 `~/.cursor/skills/<名>/`；在每个目录为 `AW_品牌文案参考规则.md` 建立**指向本仓库**的软链；并把 Markdown 里的规则链接改成 `AW_品牌文案参考规则.md`（同目录）。
+
+若仓库不在上述路径，可先：
+
+```bash
+export AW_SKILLS_REPO="/你的/aw-brand-ai-skill/绝对路径"
+bash "$AW_SKILLS_REPO/scripts/install-global-aw-skills.sh"
+```
+
+更新 skill 逻辑后**再执行一次脚本**即可覆盖各 `SKILL.md`。
 
 ## 发布到 GitHub（维护者）
 
