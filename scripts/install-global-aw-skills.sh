@@ -8,9 +8,14 @@ set -euo pipefail
 
 REPO="${AW_SKILLS_REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 RULES="$REPO/AW_品牌文案参考规则.md"
+BASELINE="$REPO/AW_品牌共通基石.md"
 
 if [[ ! -f "$RULES" ]]; then
-  echo "未找到规则文件: $RULES" >&2
+  echo "未找到: $RULES" >&2
+  exit 1
+fi
+if [[ ! -f "$BASELINE" ]]; then
+  echo "未找到: $BASELINE" >&2
   exit 1
 fi
 
@@ -21,11 +26,17 @@ for d in aw-hub aw-topic-brief aw-video-script aw-listing-creative aw-product; d
   mkdir -p "${HOME}/.cursor/skills/${d}"
   cp "${REPO}/.cursor/skills/${d}/SKILL.md" "${HOME}/.cursor/skills/${d}/SKILL.md"
   ln -sf "$RULES" "${HOME}/.cursor/skills/${d}/AW_品牌文案参考规则.md"
-  # 全局目录下用同目录软链的规则文件，替换仓库内的 ../../../ 链接
+  ln -sf "$BASELINE" "${HOME}/.cursor/skills/${d}/AW_品牌共通基石.md"
   if sed --version >/dev/null 2>&1; then
-    sed -i 's|](\.\./\.\./\.\./AW_品牌文案参考规则.md)|](AW_品牌文案参考规则.md)|g' "${HOME}/.cursor/skills/${d}/SKILL.md"
+    sed -i \
+      -e 's|](\.\./\.\./\.\./AW_品牌文案参考规则.md)|](AW_品牌文案参考规则.md)|g' \
+      -e 's|](\.\./\.\./\.\./AW_品牌共通基石.md)|](AW_品牌共通基石.md)|g' \
+      "${HOME}/.cursor/skills/${d}/SKILL.md"
   else
-    sed -i '' 's|](\.\./\.\./\.\./AW_品牌文案参考规则.md)|](AW_品牌文案参考规则.md)|g' "${HOME}/.cursor/skills/${d}/SKILL.md"
+    sed -i '' \
+      -e 's|](\.\./\.\./\.\./AW_品牌文案参考规则.md)|](AW_品牌文案参考规则.md)|g' \
+      -e 's|](\.\./\.\./\.\./AW_品牌共通基石.md)|](AW_品牌共通基石.md)|g' \
+      "${HOME}/.cursor/skills/${d}/SKILL.md"
   fi
   echo "已安装: ~/.cursor/skills/${d}/"
 done
