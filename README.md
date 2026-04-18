@@ -14,6 +14,8 @@
 | `.cursor/skills/aw-video-script/SKILL.md`     | **短视频脚本**：分镜、口播、钩子（骨架；细则待 `AW_短视频脚本规范.md`）。           |
 | `.cursor/skills/aw-listing-creative/SKILL.md` | **电商主图与详情**：主图文案、详情模块标题与卖点线（骨架；细则待 `AW_电商主图详情指引.md`）。 |
 | `.cursor/skills/aw-product/SKILL.md`          | **产品与参数**：规格、适配、SKU 口径（骨架；真源待 `AW_产品参数与SKU.md`）。      |
+| `agent-skill-map.json`                        | **多 CLI 安装映射**：Cursor / Hermes / OpenClaw / `~/.agents` 等目标路径与 skill 列表。 |
+| `scripts/install-agent-skill-links.sh`       | 读取映射：**复制 `SKILL.md` + 内链替换 + 规则文件软链** 到所选目标。                 |
 
 
 原单一入口 **`awaiskill`** 已拆为 **`aw-topic-brief`**（文案向）；不确定用哪个时，先 **`aw-hub`**。
@@ -26,11 +28,11 @@
 
 1. Clone 本仓库（或 submodule 到内容仓库）。
 2. 用 Cursor **打开含 `.cursor/skills/` 的仓库根目录**。
-3. 对话里可提：**AW**、**总调度**、**文案**、**脚本**、**详情**、**参数** 等；或说明「不知道从哪个开始」→ Agent 应优先参考 `**aw-hub`**。
+3. 对话里可提：**AW**、**总调度**、**文案**、**脚本**、**详情**、**参数** 等；或说明「不知道从哪个开始」→ Agent 应优先参考 **`aw-hub`**。
 
 ### 方式 B：个人全局（推荐用脚本）
 
-子技能在项目里用 `**../../../AW_品牌共通基石.md`** 与 `**../../../AW_品牌文案参考规则.md`**；拷到 `~/.cursor/skills/` 后由脚本改为同目录下的 **双软链** + Markdown 内相对链接。
+子技能在项目里用 `../../../AW_品牌共通基石.md` 与 `../../../AW_品牌文案参考规则.md`；拷到 `~/.cursor/skills/` 后由脚本改为同目录下的 **双软链** + Markdown 内相对链接。
 
 在终端执行（路径按你本机 clone 位置改）：
 
@@ -38,7 +40,7 @@
 bash "/Users/young/TRAE SOLO/scripts/install-global-aw-skills.sh"
 ```
 
-脚本会：**删除全局 `awaiskill`**；把五个 `SKILL.md` 复制到 `~/.cursor/skills/<名>/`；在每个目录为 `**AW_品牌文案参考规则.md**` 与 `**AW_品牌共通基石.md**` 建立指向本仓库的软链；并把 Markdown 里的 `../../../…` 链接改成同目录文件名。
+脚本会：**删除全局 `awaiskill`**；把五个 `SKILL.md` 复制到 `~/.cursor/skills/<名>/`；在每个目录为 `AW_品牌文案参考规则.md` 与 `AW_品牌共通基石.md` 建立指向本仓库的软链；并把 Markdown 里的 `../../../…` 链接改成同目录文件名。
 
 若仓库不在上述路径，可先：
 
@@ -48,6 +50,39 @@ bash "$AW_SKILLS_REPO/scripts/install-global-aw-skills.sh"
 ```
 
 更新 skill 逻辑后**再执行一次脚本**即可覆盖各 `SKILL.md`。
+
+### 方式 C：OpenClaw / Hermes / 通用 `~/.agents`（映射 + 一键软链）
+
+仓库根目录 **`agent-skill-map.json`** 描述：每个 skill 在仓库内的路径、要安装到的各 CLI 根目录（Cursor / Hermes / OpenClaw / `~/.agents/skills`）。**正文仍只在仓库一份**；安装脚本负责 **复制 `SKILL.md`（并改写内链）+ 对两份规则 `*.md` 建软链**。
+
+```bash
+# 只装 Cursor 全局（等同旧 install-global-aw-skills.sh）
+bash scripts/install-agent-skill-links.sh --targets cursor
+
+# 一次装齐常见目录（按你本机实际存在的 CLI 选用）
+bash scripts/install-agent-skill-links.sh --all
+
+# 预览
+bash scripts/install-agent-skill-links.sh --all --dry-run
+```
+
+- **Hermes**：默认安装到 `~/.hermes/skills/arcane-warrior/<skill>/`（可在 `agent-skill-map.json` 改 `category`）。  
+- **OpenClaw**：`~/.openclaw/skills/<skill>/`（与官方文档「managed/local skills」一致，路径以 [OpenClaw Skills 文档](https://docs.openclaw.ai/skills) 为准）。  
+- **通用 AgentSkills**：`~/.agents/skills/<skill>/`。
+
+**自定义额外目录**：编辑 `agent-skill-map.json` 顶层数组 **`custom_targets`**，例如：
+
+```json
+"custom_targets": [
+  {
+    "label": "my-cli",
+    "root": "~/.config/myagent/skills",
+    "layout": "flat"
+  }
+]
+```
+
+装完后各客户端**重启一次**以便重新扫描 skills。
 
 ## 发布到 GitHub（维护者）
 
@@ -62,7 +97,7 @@ git push -u origin main
 ## 版本与更新
 
 - 规则与更新日志见 `AW_品牌文案参考规则.md` 文首与「更新日志」。  
-- 同事 `**git pull**` 同步；占位文档（`AW_短视频脚本规范.md` 等）补齐后同样提交到本仓库即可。
+- 同事 **`git pull`** 同步；占位文档（`AW_短视频脚本规范.md` 等）补齐后同样提交到本仓库即可。
 
 ## 许可与保密
 

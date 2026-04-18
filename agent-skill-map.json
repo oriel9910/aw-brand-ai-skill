@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "package": "aw-brand-ai-skill",
+  "description": "Maps repo-native Cursor skills + rule docs to common agent CLI install locations via symlinks (single source of truth in this repo).",
+  "skills": [
+    { "id": "aw-hub", "source": ".cursor/skills/aw-hub" },
+    { "id": "aw-topic-brief", "source": ".cursor/skills/aw-topic-brief" },
+    { "id": "aw-video-script", "source": ".cursor/skills/aw-video-script" },
+    { "id": "aw-listing-creative", "source": ".cursor/skills/aw-listing-creative" },
+    { "id": "aw-product", "source": ".cursor/skills/aw-product" }
+  ],
+  "documents": [
+    { "file": "AW_品牌共通基石.md", "source": "AW_品牌共通基石.md" },
+    { "file": "AW_品牌文案参考规则.md", "source": "AW_品牌文案参考规则.md" }
+  ],
+  "targets": {
+    "cursor": {
+      "root": "~/.cursor/skills",
+      "layout": "flat",
+      "notes": "Cursor project skills remain .cursor/skills/ in repo; this installs global copies."
+    },
+    "hermes": {
+      "root": "~/.hermes/skills",
+      "layout": "category",
+      "category": "arcane-warrior",
+      "notes": "Hermes uses ~/.hermes/skills/<category>/<skill>/SKILL.md style paths."
+    },
+    "openclaw": {
+      "root": "~/.openclaw/skills",
+      "layout": "flat",
+      "notes": "OpenClaw managed/local skills: ~/.openclaw/skills (see docs.openclaw.ai/skills)."
+    },
+    "agents": {
+      "root": "~/.agents/skills",
+      "layout": "flat",
+      "notes": "Generic AgentSkills-style personal dir referenced by OpenClaw docs."
+    }
+  },
+  "custom_targets": []
+}
