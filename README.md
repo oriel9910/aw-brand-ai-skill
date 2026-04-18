@@ -4,10 +4,12 @@
 
 ## 仓库里有什么
 
-| 路径 | 说明 |
-|------|------|
-| `AW_品牌文案参考规则.md` | 品牌文案**唯一权威规则**（含类型 A～F、漫威、创始人红线、与可选 dbs 协同等）。 |
+
+| 路径                                  | 说明                                                 |
+| ----------------------------------- | -------------------------------------------------- |
+| `AW_品牌文案参考规则.md`                    | 品牌文案**唯一权威规则**（含类型 A～F、漫威、创始人红线、与可选 dbs 协同等）。      |
 | `.cursor/skills/awaiskill/SKILL.md` | Cursor **Skill 入口**：同事问「你能做什么」时的口语介绍 + Agent 执行说明。 |
+
 
 克隆本仓库后，用 Cursor **打开该文件夹作为工作区**，即可在本项目中自动加载 `awaiskill`。
 
@@ -15,10 +17,10 @@
 
 ### 方式 A：只做项目级（推荐团队仓库）
 
-1. 把本仓库 **clone** 或 **submodule** 进你们的品牌/内容仓库。  
-2. 保证工作区根目录下存在：  
-   - `AW_品牌文案参考规则.md`  
-   - `.cursor/skills/awaiskill/SKILL.md`  
+1. 把本仓库 **clone** 或 **submodule** 进你们的品牌/内容仓库。
+2. 保证工作区根目录下存在：
+  - `AW_品牌文案参考规则.md`  
+  - `.cursor/skills/awaiskill/SKILL.md`
 3. 用 Cursor 打开该工作区，在 Agent 里提 **AW / 品牌文案 / `/awaiskill`** 等即可。
 
 ### 方式 B：个人全局（任意文件夹都能用）
@@ -37,7 +39,7 @@ cp "路径/.cursor/skills/awaiskill/SKILL.md" ~/.cursor/skills/awaiskill/SKILL.m
 
 ## 发布到 GitHub（维护者）
 
-1. 在 GitHub 上 **New repository**（例如 `aw-brand-cursor-skill`，可见范围按公司要求选 Private/Public）。  
+1. 在 GitHub 上 **New repository**（例如 `aw-brand-cursor-skill`，可见范围按公司要求选 Private/Public）。
 2. 本地已 `git init` 并含首次提交时，绑定远程并推送：
 
 本仓库已绑定的远程（维护者核对用）：
@@ -58,7 +60,7 @@ git push -u origin main
 ## 版本与更新
 
 - 规则文档文首有 **版本号**；更新日志见 `AW_品牌文案参考规则.md` 内「更新日志」章节。  
-- 同事侧：**`git pull`** 即可同步；使用方式 B 的，拉代码后规则通过软链已更新，`SKILL.md` 若有变更再 `cp` 一次。
+- 同事侧：`**git pull`** 即可同步；使用方式 B 的，拉代码后规则通过软链已更新，`SKILL.md` 若有变更再 `cp` 一次。
 
 ## 许可与保密
 
