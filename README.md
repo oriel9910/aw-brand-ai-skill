@@ -40,18 +40,20 @@ cp "路径/.cursor/skills/awaiskill/SKILL.md" ~/.cursor/skills/awaiskill/SKILL.m
 1. 在 GitHub 上 **New repository**（例如 `aw-brand-cursor-skill`，可见范围按公司要求选 Private/Public）。  
 2. 本地已 `git init` 并含首次提交时，绑定远程并推送：
 
+本仓库已绑定的远程（维护者核对用）：
+
+`https://github.com/oriel9910/aw-brand-ai-skill.git`
+
+首次推送：
+
 ```bash
 cd /path/to/this-repo
-git remote add origin https://github.com/<组织或用户名>/<仓库名>.git
+git remote add origin https://github.com/oriel9910/aw-brand-ai-skill.git
 git branch -M main
 git push -u origin main
 ```
 
-若已安装 [GitHub CLI](https://cli.github.com/)：
-
-```bash
-gh repo create <仓库名> --private --source=. --remote=origin --push
-```
+若已安装 [GitHub CLI](https://cli.github.com/)，也可在空目录用 `gh repo create` 建库；本仓库已存在远程时只需 `git push -u origin main`。
 
 ## 版本与更新
 
