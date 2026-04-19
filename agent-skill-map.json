@@ -7,11 +7,14 @@
     { "id": "aw-topic-brief", "source": ".cursor/skills/aw-topic-brief" },
     { "id": "aw-video-script", "source": ".cursor/skills/aw-video-script" },
     { "id": "aw-listing-creative", "source": ".cursor/skills/aw-listing-creative" },
-    { "id": "aw-product", "source": ".cursor/skills/aw-product" }
+    { "id": "aw-product", "source": ".cursor/skills/aw-product" },
+    { "id": "aw-listing-diagnosis", "source": ".cursor/skills/aw-listing-diagnosis" },
+    { "id": "aw-detail-diagnosis", "source": ".cursor/skills/aw-detail-diagnosis" }
   ],
   "documents": [
     { "file": "AW_品牌共通基石.md", "source": "AW_品牌共通基石.md" },
-    { "file": "AW_品牌文案参考规则.md", "source": "AW_品牌文案参考规则.md" }
+    { "file": "AW_品牌文案参考规则.md", "source": "AW_品牌文案参考规则.md" },
+    { "file": "AW_产品参数与SKU.md", "source": "AW_产品参数与SKU.md" }
   ],
   "targets": {
     "cursor": {

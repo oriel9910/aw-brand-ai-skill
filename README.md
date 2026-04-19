@@ -1,21 +1,24 @@
 # AW 品牌 · Cursor Skills（多技能 + 总调度）
 
-本仓库提供 **ARCANE WARRIOR（AW）** 在 Cursor 里的一组 Agent Skills：**总调度 `aw-hub` + 四个子技能**，以及 **`AW_品牌共通基石.md`**（全技能先读）与 **`AW_品牌文案参考规则.md`**（第四章起执行层）。
+本仓库提供 **ARCANE WARRIOR（AW）** 在 Cursor 里的一组 Agent Skills：**总调度 `aw-hub` + 六个子技能**，以及 **`AW_品牌共通基石.md`**（全技能先读）、**`AW_品牌文案参考规则.md`**（第四章起执行层）、**`AW_产品参数与SKU.md`**（Level 3 产品真源，按需片段读）。
 
 ## 仓库里有什么
 
 
-| 路径                                            | 说明                                                    |
-| --------------------------------------------- | ----------------------------------------------------- |
-| `AW_品牌共通基石.md`                                | **全技能先读**：品牌态度、产品理解、调性规范、**创始人观点与用户洞察**（原第十章，现为共通第四章 4.1～4.5）。 |
-| `AW_品牌文案参考规则.md`                              | **第四章起执行层**：方法论、海报结构、类型 A～F、话术库、竞品与壁垒、类型指南、dbs 协同等。 |
-| `.cursor/skills/aw-hub/SKILL.md`              | **总调度**：同事问「AW 能做什么」时的口语总览 + 任务路由表。                   |
-| `.cursor/skills/aw-topic-brief/SKILL.md`      | **选题与文案方向**：海报、社交、上新活动、公众号等成稿。                        |
-| `.cursor/skills/aw-video-script/SKILL.md`     | **短视频脚本**：分镜、口播、钩子（骨架；细则待 `AW_短视频脚本规范.md`）。           |
-| `.cursor/skills/aw-listing-creative/SKILL.md` | **电商主图与详情**：主图文案、详情模块标题与卖点线（骨架；细则待 `AW_电商主图详情指引.md`）。 |
-| `.cursor/skills/aw-product/SKILL.md`          | **产品与参数**：规格、适配、SKU 口径（骨架；真源待 `AW_产品参数与SKU.md`）。      |
-| `agent-skill-map.json`                        | **多 CLI 安装映射**：Cursor / Hermes / OpenClaw / `~/.agents` 等目标路径与 skill 列表。 |
-| `scripts/install-agent-skill-links.sh`       | 读取映射：**复制 `SKILL.md` + 内链替换 + 规则文件软链** 到所选目标。                 |
+| 路径                                             | 说明                                                                       |
+| ---------------------------------------------- | ------------------------------------------------------------------------ |
+| `AW_品牌共通基石.md`                                 | **全技能先读**：品牌态度、产品理解、调性规范、**创始人观点与用户洞察**（原第十章，现为共通第四章 4.1～4.5）。           |
+| `AW_品牌文案参考规则.md`                               | **第四章起执行层**：方法论、海报结构、类型 A～F、话术库、竞品与壁垒、类型指南、dbs 协同等。                      |
+| `AW_产品参数与SKU.md`                                | **Level 3 真源**：适配、参数、SKU、价格、人群画像；**经 aw-product 检索后片段读取**，勿整本灌上下文。                |
+| `.cursor/skills/aw-hub/SKILL.md`               | **总调度**：同事问「AW 能做什么」时的口语总览 + 任务路由表。                                      |
+| `.cursor/skills/aw-topic-brief/SKILL.md`       | **选题与文案方向**：海报、社交、上新活动、公众号等成稿。                                           |
+| `.cursor/skills/aw-video-script/SKILL.md`      | **短视频脚本**：分镜、口播、钩子（骨架；细则待 `AW_短视频脚本规范.md`）。                              |
+| `.cursor/skills/aw-listing-creative/SKILL.md`  | **电商主图与详情**：主图文案、详情模块标题与卖点线（骨架；细则待 `AW_电商主图详情指引.md`）。                    |
+| `.cursor/skills/aw-product/SKILL.md`           | **产品与参数**：规格、适配、SKU 口径；查数走真源，见 skill 内 L3 检索协议。                            |
+| `.cursor/skills/aw-listing-diagnosis/SKILL.md` | **电商主图诊断**：上传1~5张主图，五维度百分制评分 + 等级判定 + 优先级改进建议。                           |
+| `.cursor/skills/aw-detail-diagnosis/SKILL.md`  | **电商详情页诊断**：上传详情页全图，六维度百分制评分 + 结构优化建议 + 优先级改进清单。                         |
+| `agent-skill-map.json`                         | **多 CLI 安装映射**：Cursor / Hermes / OpenClaw / `~/.agents` 等目标路径与 skill 列表。 |
+| `scripts/install-agent-skill-links.sh`         | 读取映射：**复制 `SKILL.md` + 内链替换 + 对 `documents` 所列 `*.md` 建软链** 到所选目标。                            |
 
 
 原单一入口 **`awaiskill`** 已拆为 **`aw-topic-brief`**（文案向）；不确定用哪个时，先 **`aw-hub`**。
@@ -32,7 +35,7 @@
 
 ### 方式 B：个人全局（推荐用脚本）
 
-子技能在项目里用 `../../../AW_品牌共通基石.md` 与 `../../../AW_品牌文案参考规则.md`；拷到 `~/.cursor/skills/` 后由脚本改为同目录下的 **双软链** + Markdown 内相对链接。
+子技能在项目里用 `../../../AW_品牌共通基石.md` 等相对链；拷到 `~/.cursor/skills/` 后由脚本改为同目录文件名，并为 **`agent-skill-map.json` 的 `documents` 列出的所有规则与真源文件** 建立指向本仓库的软链。
 
 在终端执行（路径按你本机 clone 位置改）：
 
@@ -40,7 +43,7 @@
 bash "/Users/young/TRAE SOLO/scripts/install-global-aw-skills.sh"
 ```
 
-脚本会：**删除全局 `awaiskill`**；把五个 `SKILL.md` 复制到 `~/.cursor/skills/<名>/`；在每个目录为 `AW_品牌文案参考规则.md` 与 `AW_品牌共通基石.md` 建立指向本仓库的软链；并把 Markdown 里的 `../../../…` 链接改成同目录文件名。
+脚本会：**删除全局 `awaiskill`**；把各 skill 的 `SKILL.md` 复制到 `~/.cursor/skills/<id>/`；在每个目录为映射内文档建软链；并把 Markdown 里的 `../../../…` 链接改成同目录文件名。
 
 若仓库不在上述路径，可先：
 
@@ -53,7 +56,7 @@ bash "$AW_SKILLS_REPO/scripts/install-global-aw-skills.sh"
 
 ### 方式 C：OpenClaw / Hermes / 通用 `~/.agents`（映射 + 一键软链）
 
-仓库根目录 **`agent-skill-map.json`** 描述：每个 skill 在仓库内的路径、要安装到的各 CLI 根目录（Cursor / Hermes / OpenClaw / `~/.agents/skills`）。**正文仍只在仓库一份**；安装脚本负责 **复制 `SKILL.md`（并改写内链）+ 对两份规则 `*.md` 建软链**。
+仓库根目录 **`agent-skill-map.json`** 描述：每个 skill 在仓库内的路径、要安装到的各 CLI 根目录（Cursor / Hermes / OpenClaw / `~/.agents/skills`）。**正文仍只在仓库一份**；安装脚本负责 **复制 `SKILL.md`（并改写内链）+ 对 `documents` 内各 `*.md` 建软链**。
 
 ```bash
 # 只装 Cursor 全局（等同旧 install-global-aw-skills.sh）

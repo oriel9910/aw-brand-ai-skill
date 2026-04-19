@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AW Brand AI · ARCANE WARRIOR</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080808;
+    --bg2: #101010;
+    --bg3: #181818;
+    --border: #262626;
+    --border2: #2e2e2e;
+    --text: #e8e8e8;
+    --text2: #999;
+    --text3: #555;
+    --gold: #c8a45a;
+    --gold-dim: #8a6e36;
+    --user-bg: #161d2e;
+    --user-border: #1e2d4a;
+    --ai-bg: #141414;
+    --red: #c0392b;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif; }
+
+  /* ── LAYOUT ── */
+  #app { display: flex; flex-direction: column; height: 100vh; max-width: 860px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  #header {
+    flex-shrink: 0;
+    padding: 16px 20px 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  #brand-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  #brand-name {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.18em;
+    color: var(--gold); text-transform: uppercase;
+  }
+  #brand-sub { font-size: 10px; color: var(--text3); letter-spacing: 0.12em; margin-top: 1px; }
+  #header-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text2); cursor: pointer; font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover { background: var(--border); color: var(--text); }
+
+  /* ── TABS ── */
+  #tabs {
+    display: flex; gap: 4px; overflow-x: auto;
+    scrollbar-width: none; padding-bottom: 0;
+  }
+  #tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 14px; border-radius: 10px 10px 0 0;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    color: var(--text3); transition: all 0.15s;
+    border: 1px solid transparent; border-bottom: none;
+    letter-spacing: 0.04em;
+  }
+  .tab:hover { color: var(--text2); }
+  .tab.active {
+    background: var(--bg2); color: var(--gold);
+    border-color: var(--border); border-bottom-color: var(--bg2);
+  }
+  .tab-icon { margin-right: 5px; font-size: 11px; }
+
+  /* ── CHAT AREA ── */
+  #chat-wrap {
+    flex: 1; overflow-y: auto; background: var(--bg2);
+    padding: 24px 20px; scroll-behavior: smooth;
+  }
+  #chat-wrap::-webkit-scrollbar { width: 4px; }
+  #chat-wrap::-webkit-scrollbar-track { background: transparent; }
+  #chat-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* ── MESSAGES ── */
+  .msg { display: flex; gap: 10px; margin-bottom: 20px; align-items: flex-start; }
+  .msg.user { flex-direction: row-reverse; }
+  .avatar {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+  }
+  .avatar.ai {
+    background: linear-gradient(135deg, #1a1a1a, #2a2218);
+    border: 1px solid var(--gold-dim); color: var(--gold); letter-spacing: 0.05em;
+  }
+  .avatar.user { background: var(--user-border); color: #7ca3e0; }
+  .bubble {
+    max-width: calc(100% - 80px);
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    font-size: 14px; line-height: 1.7;
+    position: relative;
+  }
+  .bubble.ai {
+    background: var(--ai-bg);
+    border: 1px solid var(--border);
+    border-top-left-radius: 4px;
+  }
+  .bubble.user {
+    background: var(--user-bg);
+    border: 1px solid var(--user-border);
+    border-top-right-radius: 4px;
+  }
+
+  /* markdown styles inside bubble */
+  .bubble h1, .bubble h2, .bubble h3 { color: var(--gold); margin: 12px 0 6px; font-size: 14px; font-weight: 700; }
+  .bubble h1 { font-size: 15px; }
+  .bubble p { margin-bottom: 8px; }
+  .bubble p:last-child { margin-bottom: 0; }
+  .bubble ul, .bubble ol { padding-left: 18px; margin-bottom: 8px; }
+  .bubble li { margin-bottom: 4px; }
+  .bubble strong { color: #e0d5c0; }
+  .bubble em { color: var(--text2); font-style: normal; }
+  .bubble code {
+    background: var(--bg3); padding: 1px 6px; border-radius: 4px;
+    font-size: 12px; font-family: 'SF Mono', Menlo, monospace;
+    color: var(--gold);
+  }
+  .bubble pre {
+    background: var(--bg3); padding: 12px; border-radius: 8px;
+    overflow-x: auto; margin: 8px 0;
+    border: 1px solid var(--border);
+  }
+  .bubble pre code { background: none; padding: 0; color: var(--text); }
+  .bubble table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+  .bubble th { background: var(--bg3); color: var(--gold); padding: 6px 10px; border: 1px solid var(--border2); text-align: left; font-weight: 600; }
+  .bubble td { padding: 6px 10px; border: 1px solid var(--border); color: var(--text); }
+  .bubble tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .bubble blockquote { border-left: 3px solid var(--gold-dim); padding-left: 12px; color: var(--text2); margin: 8px 0; }
+  .bubble hr { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+  /* copy btn */
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text3); font-size: 11px; padding: 3px 7px;
+    border-radius: 5px; cursor: pointer; opacity: 0; transition: opacity 0.2s;
+  }
+  .bubble.ai:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+
+  /* image in message */
+  .msg-image {
+    max-width: 240px; max-height: 200px; border-radius: 10px;
+    border: 1px solid var(--border); display: block; margin-bottom: 8px;
+    object-fit: cover;
+  }
+
+  /* image preview in input */
+  #img-preview-wrap {
+    display: none; padding: 10px 16px 0;
+    background: var(--bg3); border-top: 1px solid var(--border);
+  }
+  #img-preview-wrap.show { display: flex; align-items: center; gap: 10px; }
+  #img-preview { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border2); }
+  #img-preview-name { font-size: 12px; color: var(--text2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #img-remove {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--border2); border: none; color: var(--text2);
+    cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center;
+  }
+  #img-remove:hover { background: var(--red); color: white; }
+
+  /* ── INPUT AREA ── */
+  #input-area {
+    flex-shrink: 0;
+    background: var(--bg3);
+    border-top: 1px solid var(--border);
+  }
+  #input-row {
+    display: flex; align-items: flex-end; gap: 8px;
+    padding: 12px 16px;
+  }
+  #msg-input {
+    flex: 1; background: var(--bg); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); color: var(--text);
+    padding: 10px 14px; font-size: 14px; line-height: 1.5;
+    resize: none; max-height: 160px; min-height: 42px;
+    font-family: inherit; outline: none; transition: border-color 0.15s;
+  }
+  #msg-input::placeholder { color: var(--text3); }
+  #msg-input:focus { border-color: var(--gold-dim); }
+  .action-btn {
+    width: 40px; height: 40px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border2); background: var(--bg);
+    color: var(--text2); cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .action-btn:hover { background: var(--border); color: var(--text); }
+  #send-btn {
+    background: var(--gold); border-color: var(--gold);
+    color: var(--bg); font-size: 17px; font-weight: 700;
+  }
+  #send-btn:hover { background: #dbb86b; border-color: #dbb86b; }
+  #send-btn:disabled { background: var(--border2); border-color: var(--border2); color: var(--text3); cursor: not-allowed; }
+  #file-input { display: none; }
+
+  /* hint bar */
+  #hint { padding: 0 16px 10px; font-size: 11px; color: var(--text3); }
+
+  /* ── LOADING ── */
+  .typing { display: flex; gap: 5px; padding: 4px 0; }
+  .typing span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gold-dim); animation: bounce 1.2s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+  /* ── EMPTY STATE ── */
+  #empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; gap: 12px; text-align: center; padding: 40px 20px;
+  }
+  #empty-logo {
+    font-size: 36px; font-weight: 900; letter-spacing: 0.2em;
+    color: var(--gold); opacity: 0.15;
+  }
+  #empty-title { font-size: 16px; color: var(--text2); font-weight: 500; }
+  #empty-desc { font-size: 13px; color: var(--text3); line-height: 1.6; max-width: 320px; }
+  .quick-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
+  .chip {
+    padding: 7px 13px; border-radius: 20px;
+    border: 1px solid var(--border2); background: var(--bg3);
+    font-size: 12px; color: var(--text2); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--gold-dim); color: var(--gold); background: rgba(200,164,90,0.06); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 100;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 24px; width: 100%; max-width: 420px;
+  }
+  .modal h3 { font-size: 15px; color: var(--text); margin-bottom: 6px; }
+  .modal p { font-size: 12px; color: var(--text3); margin-bottom: 16px; line-height: 1.6; }
+  .modal input {
+    width: 100%; background: var(--bg); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); color: var(--text);
+    padding: 10px 14px; font-size: 14px; outline: none;
+    font-family: monospace; transition: border-color 0.15s;
+    margin-bottom: 16px;
+  }
+  .modal input:focus { border-color: var(--gold-dim); }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn {
+    padding: 8px 18px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    border: 1px solid transparent; transition: all 0.15s;
+  }
+  .btn-ghost { background: var(--bg); border-color: var(--border2); color: var(--text2); }
+  .btn-ghost:hover { border-color: var(--border); color: var(--text); }
+  .btn-gold { background: var(--gold); color: var(--bg); }
+  .btn-gold:hover { background: #dbb86b; }
+
+  /* error toast */
+  #toast {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: var(--red); color: white; padding: 10px 18px;
+    border-radius: 8px; font-size: 13px; opacity: 0;
+    transition: opacity 0.3s; pointer-events: none; z-index: 200;
+    max-width: 90vw; text-align: center;
+  }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- HEADER -->
+  <div id="header">
+    <div id="brand-row">
+      <div>
+        <div id="brand-name">AW Brand AI</div>
+        <div id="brand-sub">ARCANE WARRIOR · 品牌内容助手</div>
+      </div>
+      <div id="header-actions">
+        <button class="icon-btn" id="new-chat-btn" title="新对话">↺</button>
+        <button class="icon-btn" id="settings-btn" title="设置API Key">⚙</button>
+      </div>
+    </div>
+    <div id="tabs">
+      <div class="tab active" data-skill="copy"><span class="tab-icon">✦</span>品牌文案</div>
+      <div class="tab" data-skill="listing"><span class="tab-icon">◈</span>电商详情</div>
+      <div class="tab" data-skill="video"><span class="tab-icon">▷</span>短视频脚本</div>
+      <div class="tab" data-skill="image"><span class="tab-icon">◉</span>图片审核</div>
+    </div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div id="chat-wrap">
+    <div id="messages"></div>
+    <div id="empty-state">
+      <div id="empty-logo">AW</div>
+      <div id="empty-title">你好，我是 AW 品牌 AI 助手</div>
+      <div id="empty-desc">当前模式：<span id="empty-skill-name">品牌文案</span><br>选择上方技能标签，然后直接描述你的需求</div>
+      <div class="quick-chips" id="quick-chips"></div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div id="input-area">
+    <div id="img-preview-wrap">
+      <img id="img-preview" alt="">
+      <span id="img-preview-name"></span>
+      <button id="img-remove">✕</button>
+    </div>
+    <div id="input-row">
+      <button class="action-btn" id="upload-btn" title="上传图片">📎</button>
+      <input type="file" id="file-input" accept="image/*">
+      <textarea id="msg-input" placeholder="描述你的需求…" rows="1"></textarea>
+      <button class="action-btn" id="send-btn">➤</button>
+    </div>
+    <div id="hint">按 Enter 发送 · Shift+Enter 换行</div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h3>⚙ 设置 Gemini API Key</h3>
+    <p>前往 <strong>aistudio.google.com</strong> → 获取 API Key，粘贴到下方。Key 仅保存在本地浏览器，不会上传。</p>
+    <input type="password" id="api-key-input" placeholder="AIza…">
+    <div class="modal-btns">
+      <button class="btn btn-ghost" id="modal-cancel">取消</button>
+      <button class="btn btn-gold" id="modal-save">保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// BRAND KNOWLEDGE BASE
+// ─────────────────────────────────────────────
+
+const BRAND_BASE = `
+# ARCANE WARRIOR（AW）品牌核心知识
+
+## 品牌定位
+AW 占领全球新能源车顶最后两平米，把每一场出行变成高净值玩家的"现实游戏"。
+品牌口号：让每一次出行都成为勇敢探索。
+终局愿景：成为整个时代最酷、最具势能的超级生活方式基础设施。
+
+## 核心态度
+- 绝不走性价比路线，享受极高品牌溢价和健康利润率
+- 品类开创者：新能源智能户外生态的绝对开创者
+- 生而全球化：搭载中国新能源汽车出海超级巨浪
+- 文化认同优先：前端靠极高粘性的文化认同直接转化
+- 鄙视链顶端：通过最核心KOL圈层建立不可撼动的圈层地位
+
+## 产品线
+**M'LinkX 车顶平台**
+- 全铝轻量 / 无损快装 / 快拆拓展 / 隐藏射灯 / 适配100+车型
+- 情感价值：车变成开放的硬件OS，可以外接任何你想要的户外魔法
+- 信任支撑：合法合规终身免检 / 极致微缩隐形收纳 / 进得了2米地库
+- 技术：Arboris树脉架构 + 数十项独家核心专利
+
+**无级悬停天幕**
+- 10秒展开/1秒速收 / 单手秒级悬停 / 无需工具不费体力 / 稀缺石墨烯涂层
+- 情感价值：把复杂留给工业，把时间还给假期；不错过每一场山野落日
+- 女性友好、零体力消耗
+
+## 目标人群
+高净值人群、新能源车主、硬派越野玩家、追求身份认同与生活方式的探索者
+
+人群需求分层：
+- 女性：防晒、拍照好看、温馨感觉 → 颜值在线、女性友好、场景氛围感
+- 年轻人：潮玩、与众不同、身份展示 → 代表自由、设计前沿、社交货币
+- 家庭奶爸：对家庭的责任、带全家出行的安心 → 承担家庭旅行的责任
+- 年长人群：享受人生美好时光 → 安心放心、全国门店售后保障
+
+## 调性关键词
+高级、自信、科技感、诗意、降维打击
+
+## 语言风格
+- 科技诗意："以悬停天幕为羽翼""把复杂留给工业，把时间还给假期"
+- 降维打击感："把出行变成现实游戏""开放的硬件OS"
+- 游戏化隐喻："现实游戏""高净值玩家"
+- 身份认同："鄙视链顶端""勇敢前行的图腾"
+
+## 调性禁区（必须遵守）
+❌ 走性价比路线 → ✅ 品牌溢价、圈层认同
+❌ 传统制造业无聊语言 → ✅ 科技诗意、降维打击
+❌ 堆砌参数卖点 → ✅ 用场景和情感传递价值
+❌ 空洞的鸡汤/口号 → ✅ 有画面感、有态度的短句
+❌ 说教式"你应该…" → ✅ 邀请式"去…"
+❌ 土味广告语（如"优雅接管山野"） → ✅ 克制、留白、有呼吸感的高级表达
+
+## 高级感法则
+字越少，越高级。不说"我很高级"，本身就是高级。克制。
+
+## 创始人6条文案红线
+1. 说"有趣"而非"有用"——"看似没有用，但它很有趣"
+2. 站在用户角度，不是品牌角度
+3. 不同人群用不同话术
+4. AW代表前沿和自由
+5. 品质服务永不妥协
+6. 中国品牌，世界级审美
+
+## 核心话术库
+- 让每一次出行都成为勇敢探索（品牌口号）
+- 把出行变成现实游戏
+- 开放的硬件OS
+- 把复杂留给工业，把时间还给假期
+- 不错过每一场山野落日
+- 智能生态基座
+- 原厂级车顶生态
+- 装得下旷野，也进得去地库
+- 合法合规终身免检
+- 以悬停天幕为羽翼
+- 女性友好、零体力消耗
+`;
+
+const COPY_METHODS = `
+## 6大文案手法
+
+### 手法①矛盾对撞
+两句对称，前一句"对的"，后一句反转，制造张力：
+例：装得下旷野，也进得去地库 / 停下来，才是出发 / 最轻的背包里背着最重的决心
+
+### 手法②去vs别的句式
+去…，别… 给方向再划边界，态度鲜明不说教：
+例：去山野，别去人海 / 去装满，别去将就 / 去感受风，别去追赶风
+
+### 手法③具象化抽象情绪
+把抽象变成可感知的画面，不说"你很累"，说"皱巴巴的心事"：
+例："别把山野，存进收藏夹" / "皱巴巴的假期，展开就平了" / "后备箱关不上的，是自由"
+
+### 手法④括号制造私语感
+括号里是整句话要读者带走的词，像悄悄话：
+例："不赶路的时候，(才在路上)" / "车顶空着，(可惜了)" / "地图上没有的路，(走过了就有了)"
+
+### 手法⑤一语双关
+一个词同时承载两层含义：
+例："展开假期，(收起)焦虑"（展开/收起=天幕动作/心理切换）
+
+### 手法⑥极致短句
+10-15字以内，能断句就断句，能砍字就砍字：
+例："去野，别去YEAH" / "装上，走" / "停。看。"
+
+## 海报三层结构
+- 视觉大字（6~15字）：场景向往，触发"我想去"，不提产品，用6大手法
+- 副标题（8~15字）：品牌态度，承接向往，自然带出AW
+- 底部说明（3~4个词组）：利益抓手，斜杠分隔，如"全系装备 / 适配100+车型 / 全国100+授权门店"
+
+## 6大文案类型
+
+### A类：封面发布文案（车型改装/装备搭配）
+调性：硬核、潮酷、有态度，像玩家之间的对话
+标题公式：车型 + 动作/变化 + 装备亮点
+常用词：满配、硬核、潮玩、C位出道、姿态王
+用「」做强调标记，短句为主10字以内
+
+### B类：漫威联名文案
+调性：热血、英雄感。核心叙事：英雄梦→现实装备→你就是英雄
+关键话术："英雄梦，不只在电影里" / "懂漫威，更懂自驾"
+各英雄调性：钢铁侠-科技炫酷/黑豹-沉稳力量/浩克-狂野爆发/蜘蛛侠-灵动轻快/金刚狼-坚韧可靠
+
+### C类：新品上新文案
+调性：期待感、场景代入，让用户觉得"这正是我要的"
+公式：新品预告 + 产品名 + 核心场景价值
+用"从…到…"结构制造转变感
+
+### D类：活动倒计时/预热文案
+调性：期待感递增、仪式感、紧迫感
+倒计时5天情绪铺垫→4天悬念→3天英雄预告→2天期待拉满→1天行动号召
+
+### E类：公众号推文/长文案
+调性：有温度、讲故事，用"嘿，AW的玩家们"开头
+结构：情感钩子→产品故事→用户证言→品牌温度→行动号召
+
+### F类：门店/渠道文案
+调性：真实、有温度、本地化，讲真实车主故事
+强调"当场装""一对一沟通""无损安装"
+`;
+
+// ─────────────────────────────────────────────
+// SKILL CONFIGS
+// ─────────────────────────────────────────────
+
+const SKILLS = {
+  copy: {
+    name: '品牌文案',
+    icon: '✦',
+    placeholder: '说说要写什么：产品、受众、渠道（小红书/海报/公众号）…',
+    allowImage: true,
+    quickChips: ['写一组天幕海报文案', '给M\'LinkX写小红书配文', '给年轻人群写一段种草文案', '漫威钢铁侠联名预热文案'],
+    systemPrompt: `你是 ARCANE WARRIOR（AW）品牌的专业文案助手，严格遵守以下品牌规范。
+
+${BRAND_BASE}
+
+${COPY_METHODS}
+
+## 你的工作方式
+1. 用户给出需求后，先判断文案类型（A~F），再选用对应的手法
+2. 每次输出2~3个版本供选择，标注文案类型
+3. 必须遵守调性禁区，绝不走性价比腔
+4. 字数克制，高级感优先
+5. 海报文案按三层结构输出（视觉大字/副标题/底部说明）
+6. 若用户上传了图片，结合图片内容写文案`
+  },
+
+  listing: {
+    name: '电商详情',
+    icon: '◈',
+    placeholder: '描述产品或上传主图，说明是哪款产品，我来优化文案结构…',
+    allowImage: true,
+    quickChips: ['帮我写天幕主图文案（3张）', '写M\'LinkX详情页模块标题', '优化这张主图的文字排版方向', '写产品卖点故事线'],
+    systemPrompt: `你是 ARCANE WARRIOR（AW）电商内容专家，专注主图文案和详情页结构。
+
+${BRAND_BASE}
+
+## 电商内容规范
+
+### 主图文案原则
+主图的职责是"让用户停下来"，3秒内传递一个清晰的理由。
+- 第1张主图：最强差异化卖点 + 场景画面 + 品牌名
+- 第2张：情感价值 / 使用场景
+- 第3张：信任支撑（专利/适配/门店）
+- 文字层级：大标（6~12字）+ 小标（8~15字）+ 利益点（3~4个词）
+- 禁止：堆砌参数、说明书式表达、超过20字的句子
+
+### 详情页模块结构（推荐顺序）
+1. **开场镜头**：场景向往，触发情感共鸣（不提产品）
+2. **产品亮相**：一句话定位 + 核心差异
+3. **痛点/场景**：用户遇到的问题 + AW如何解决
+4. **核心卖点模块**：每个卖点一个模块，标题8字以内，有情感有数据
+5. **信任背书**：专利/适配/认证/用户故事
+6. **行动号召**：到店体验/立即购买
+
+### 卖点写法
+- 不写"采用XX材料"→ 写"为什么用这个材料对你意味着什么"
+- 不写参数堆砌 → 写场景体验
+- 每个模块：小标（8字内）+ 2~3句描述 + 数据支撑（如有）
+
+若用户上传了产品图片，从图片中分析当前的文字内容，给出具体的优化建议。`
+  },
+
+  video: {
+    name: '短视频脚本',
+    icon: '▷',
+    placeholder: '告诉我产品/场景/目标人群/时长，我来写脚本…',
+    allowImage: false,
+    quickChips: ['写一个15秒天幕种草视频', '写M\'LinkX 60秒探店脚本', '写一个女性向露营开箱视频', '写漫威联名产品短视频口播'],
+    systemPrompt: `你是 ARCANE WARRIOR（AW）短视频脚本专家，专注抖音/小红书/微信视频号内容。
+
+${BRAND_BASE}
+
+## 短视频脚本规范
+
+### 黄金开头（0~3秒钩子）
+用户划走还是继续看，全在前3秒。钩子类型：
+- **痛点型**："你车顶还在裸奔？"
+- **反常识型**："我花了3年，就为了少装一颗螺丝"
+- **场景代入型**：直接展示最美画面，无需解说
+- **悬念型**："这个天幕，让她哭了"
+
+### 脚本结构
+**15秒版（种草/品牌）**：
+钩子(3s) → 产品出镜+核心卖点(8s) → 行动号召(4s)
+
+**30秒版（产品测评/使用展示）**：
+钩子(3s) → 使用痛点(5s) → 产品解决方案(15s) → 用户价值(5s) → 行动号召(2s)
+
+**60秒版（深度种草/故事型）**：
+场景钩子(5s) → 角色困境(8s) → 发现AW(5s) → 核心体验展示(30s) → 情感升华(7s) → 行动号召(5s)
+
+### 口播语言规范
+- 短句为主，每句不超过15字，方便口播
+- 用停顿制造节奏感："装上——走"
+- 口语化但有AW腔调：不土味，有点酷
+- 禁止：念产品说明书、堆砌参数、"优惠力度大"等电商腔
+
+### 分镜格式
+每条注明：镜头号 | 画面描述 | 时长 | 口播台词（如有）
+
+### 注意
+- 若是女性向视频：强调颜值、氛围、无体力负担
+- 若是硬核户外向：强调专业感、可靠性、圈层认同
+- 若是家庭向：强调安心、一家人的体验和回忆`
+  },
+
+  image: {
+    name: '图片审核',
+    icon: '◉',
+    placeholder: '上传图片，我从AW品牌角度给出专业的优化意见…',
+    allowImage: true,
+    quickChips: ['审核这张主图的品牌调性', '分析这张海报的文字层级', '这张产品图适合哪个平台？', '帮我判断这张图是否符合AW调性'],
+    systemPrompt: `你是 ARCANE WARRIOR（AW）品牌视觉内容审核专家。
+
+${BRAND_BASE}
+
+## 图片审核维度
+
+当用户上传图片时，从以下维度进行专业审核，给出具体可执行的优化建议：
+
+### 1. 品牌调性匹配度
+- 整体视觉是否符合「高级、自信、科技感、诗意、降维打击」？
+- 是否有土味、过于廉价、或制造业风格的元素？
+- 色调是否与AW品牌（黑金、深色科技感）相符？
+
+### 2. 文字内容审核（如有文字）
+- 是否违反调性禁区（性价比腔、堆砌参数、说教式表达）？
+- 文字层级是否清晰（主标/副标/利益点）？
+- 字数是否克制？能否更精简？
+
+### 3. 视觉构图与传播力
+- 3秒内能否让目标用户停下来？
+- 主体是否清晰突出？
+- 是否适合在小红书/抖音/天猫/线下门店等场景使用？
+
+### 4. 具体优化建议
+- 列出3~5条具体、可执行的改进点
+- 如有文字，给出改写后的版本
+- 说明适合哪个传播渠道
+
+### 审核格式
+先给出综合评分（满分10分）和一句总结评价，再分维度详细说明，最后给出优先级最高的改进建议。`
+  }
+};
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+
+let currentSkill = 'copy';
+let conversationHistory = [];
+let pendingImage = null; // { base64, mimeType, name, url }
+let isLoading = false;
+
+// ─────────────────────────────────────────────
+// DOM REFS
+// ─────────────────────────────────────────────
+
+const messagesEl = document.getElementById('messages');
+const emptyState = document.getElementById('empty-state');
+const emptySkillName = document.getElementById('empty-skill-name');
+const quickChipsEl = document.getElementById('quick-chips');
+const msgInput = document.getElementById('msg-input');
+const sendBtn = document.getElementById('send-btn');
+const fileInput = document.getElementById('file-input');
+const uploadBtn = document.getElementById('upload-btn');
+const imgPreviewWrap = document.getElementById('img-preview-wrap');
+const imgPreview = document.getElementById('img-preview');
+const imgPreviewName = document.getElementById('img-preview-name');
+const imgRemove = document.getElementById('img-remove');
+const settingsModal = document.getElementById('settings-modal');
+const apiKeyInput = document.getElementById('api-key-input');
+const toastEl = document.getElementById('toast');
+
+// ─────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────
+
+function showToast(msg, duration = 3000) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  setTimeout(() => toastEl.classList.remove('show'), duration);
+}
+
+function scrollToBottom() {
+  const wrap = document.getElementById('chat-wrap');
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function setLoading(val) {
+  isLoading = val;
+  sendBtn.disabled = val;
+  msgInput.disabled = val;
+}
+
+function renderMarkdown(text) {
+  try {
+    return marked.parse(text);
+  } catch (e) {
+    return text.replace(/\n/g, '<br>');
+  }
+}
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+
+function switchSkill(skillKey) {
+  currentSkill = skillKey;
+  conversationHistory = [];
+  pendingImage = null;
+  clearImagePreview();
+  messagesEl.innerHTML = '';
+  updateEmptyState();
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.skill === skillKey);
+  });
+  const skill = SKILLS[skillKey];
+  msgInput.placeholder = skill.placeholder;
+  uploadBtn.style.opacity = skill.allowImage ? '1' : '0.3';
+  uploadBtn.style.pointerEvents = skill.allowImage ? 'auto' : 'none';
+}
+
+function updateEmptyState() {
+  const skill = SKILLS[currentSkill];
+  emptySkillName.textContent = skill.name;
+  quickChipsEl.innerHTML = '';
+  skill.quickChips.forEach(chip => {
+    const el = document.createElement('div');
+    el.className = 'chip';
+    el.textContent = chip;
+    el.onclick = () => {
+      msgInput.value = chip;
+      sendMessage();
+    };
+    quickChipsEl.appendChild(el);
+  });
+  const hasMessages = messagesEl.children.length > 0;
+  emptyState.style.display = hasMessages ? 'none' : 'flex';
+}
+
+// ─────────────────────────────────────────────
+// MESSAGES
+// ─────────────────────────────────────────────
+
+function addMessage(role, text, imageUrl) {
+  emptyState.style.display = 'none';
+
+  const msg = document.createElement('div');
+  msg.className = `msg ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = `avatar ${role}`;
+  avatar.textContent = role === 'ai' ? 'AW' : '我';
+
+  const bubble = document.createElement('div');
+  bubble.className = `bubble ${role}`;
+
+  if (imageUrl) {
+    const img = document.createElement('img');
+    img.className = 'msg-image';
+    img.src = imageUrl;
+    bubble.appendChild(img);
+  }
+
+  if (role === 'ai') {
+    bubble.innerHTML += renderMarkdown(text);
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'copy-btn';
+    copyBtn.textContent = '复制';
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = '已复制';
+        setTimeout(() => copyBtn.textContent = '复制', 1500);
+      });
+    };
+    bubble.appendChild(copyBtn);
+  } else {
+    const p = document.createElement('p');
+    p.textContent = text;
+    bubble.appendChild(p);
+  }
+
+  msg.appendChild(avatar);
+  msg.appendChild(bubble);
+  messagesEl.appendChild(msg);
+  scrollToBottom();
+  return bubble;
+}
+
+function addTypingIndicator() {
+  emptyState.style.display = 'none';
+  const msg = document.createElement('div');
+  msg.className = 'msg ai';
+  msg.id = 'typing-msg';
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar ai';
+  avatar.textContent = 'AW';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ai';
+  bubble.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+  msg.appendChild(avatar);
+  msg.appendChild(bubble);
+  messagesEl.appendChild(msg);
+  scrollToBottom();
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById('typing-msg');
+  if (el) el.remove();
+}
+
+// ─────────────────────────────────────────────
+// IMAGE HANDLING
+// ─────────────────────────────────────────────
+
+function clearImagePreview() {
+  pendingImage = null;
+  imgPreviewWrap.classList.remove('show');
+  imgPreview.src = '';
+  imgPreviewName.textContent = '';
+  fileInput.value = '';
+}
+
+uploadBtn.addEventListener('click', () => {
+  if (!SKILLS[currentSkill].allowImage) {
+    showToast('当前技能不支持上传图片，请切换到其他标签');
+    return;
+  }
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件（JPG、PNG、WebP等）');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('图片不能超过10MB');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const dataUrl = ev.target.result;
+    const base64 = dataUrl.split(',')[1];
+    pendingImage = { base64, mimeType: file.type, name: file.name, url: dataUrl };
+    imgPreview.src = dataUrl;
+    imgPreviewName.textContent = file.name;
+    imgPreviewWrap.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+});
+
+imgRemove.addEventListener('click', clearImagePreview);
+
+// ─────────────────────────────────────────────
+// API CALL
+// ─────────────────────────────────────────────
+
+async function callGemini(userText, image) {
+  const apiKey = localStorage.getItem('awApiKey');
+  if (!apiKey) {
+    showToast('请先点击右上角⚙设置 Gemini API Key');
+    return null;
+  }
+
+  const skill = SKILLS[currentSkill];
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+  // Build current user parts
+  const userParts = [];
+  if (image) {
+    userParts.push({ inline_data: { mime_type: image.mimeType, data: image.base64 } });
+  }
+  userParts.push({ text: userText || '请分析这张图片' });
+
+  // Add to history
+  conversationHistory.push({ role: 'user', parts: userParts });
+
+  // Build history for API (replace images in older messages with placeholder)
+  const apiHistory = conversationHistory.map((msg, idx) => {
+    if (idx === conversationHistory.length - 1) return msg; // keep latest as-is
+    return {
+      role: msg.role,
+      parts: msg.parts.map(p => p.inline_data ? { text: '[图片]' } : p)
+    };
+  });
+
+  const body = {
+    system_instruction: { parts: [{ text: skill.systemPrompt }] },
+    contents: apiHistory,
+    generationConfig: {
+      temperature: 0.85,
+      maxOutputTokens: 3000,
+      topP: 0.95
+    }
+  };
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    const msg = err?.error?.message || `HTTP ${resp.status}`;
+    throw new Error(msg);
+  }
+
+  const data = await resp.json();
+  const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!replyText) throw new Error('没有收到有效回复，请重试');
+
+  conversationHistory.push({ role: 'model', parts: [{ text: replyText }] });
+  return replyText;
+}
+
+// ─────────────────────────────────────────────
+// SEND MESSAGE
+// ─────────────────────────────────────────────
+
+async function sendMessage() {
+  if (isLoading) return;
+  const text = msgInput.value.trim();
+  const image = pendingImage;
+
+  if (!text && !image) return;
+
+  // Show user message
+  addMessage('user', text || '（上传了一张图片）', image ? image.url : null);
+
+  // Clear input
+  msgInput.value = '';
+  msgInput.style.height = 'auto';
+  clearImagePreview();
+  setLoading(true);
+  addTypingIndicator();
+
+  try {
+    const reply = await callGemini(text, image);
+    removeTypingIndicator();
+    if (reply) addMessage('ai', reply);
+  } catch (err) {
+    removeTypingIndicator();
+    let errMsg = err.message || '请求失败，请检查网络和API Key';
+    if (errMsg.includes('API_KEY_INVALID') || errMsg.includes('400')) {
+      errMsg = 'API Key 无效，请重新设置';
+    } else if (errMsg.includes('429')) {
+      errMsg = '请求太频繁，请稍后再试';
+    } else if (errMsg.includes('403')) {
+      errMsg = 'API Key 权限不足，请检查';
+    }
+    addMessage('ai', `⚠️ **出错了**：${errMsg}\n\n请点击右上角 ⚙ 检查 API Key 设置。`);
+    // Remove the failed user message from history
+    conversationHistory.pop();
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ─────────────────────────────────────────────
+// INPUT EVENTS
+// ─────────────────────────────────────────────
+
+msgInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+msgInput.addEventListener('input', () => {
+  msgInput.style.height = 'auto';
+  msgInput.style.height = Math.min(msgInput.scrollHeight, 160) + 'px';
+});
+
+sendBtn.addEventListener('click', sendMessage);
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => switchSkill(tab.dataset.skill));
+});
+
+// ─────────────────────────────────────────────
+// NEW CHAT
+// ─────────────────────────────────────────────
+
+document.getElementById('new-chat-btn').addEventListener('click', () => {
+  conversationHistory = [];
+  pendingImage = null;
+  clearImagePreview();
+  messagesEl.innerHTML = '';
+  updateEmptyState();
+});
+
+// ─────────────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────────────
+
+document.getElementById('settings-btn').addEventListener('click', () => {
+  apiKeyInput.value = localStorage.getItem('awApiKey') || '';
+  settingsModal.classList.add('show');
+  setTimeout(() => apiKeyInput.focus(), 100);
+});
+
+document.getElementById('modal-cancel').addEventListener('click', () => {
+  settingsModal.classList.remove('show');
+});
+
+document.getElementById('modal-save').addEventListener('click', () => {
+  const key = apiKeyInput.value.trim();
+  if (!key) { showToast('请输入 API Key'); return; }
+  if (!key.startsWith('AIza')) { showToast('Gemini API Key 格式不对，应以 AIza 开头'); return; }
+  localStorage.setItem('awApiKey', key);
+  settingsModal.classList.remove('show');
+  showToast('API Key 已保存 ✓');
+});
+
+settingsModal.addEventListener('click', (e) => {
+  if (e.target === settingsModal) settingsModal.classList.remove('show');
+});
+
+apiKeyInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('modal-save').click();
+});
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+
+marked.setOptions({ breaks: true, gfm: true });
+switchSkill('copy');
+
+// Prompt for API key on first load
+if (!localStorage.getItem('awApiKey')) {
+  setTimeout(() => {
+    settingsModal.classList.add('show');
+    apiKeyInput.focus();
+  }, 500);
+}
+</script>
+</body>
+</html>

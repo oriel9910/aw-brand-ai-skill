@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# 读取仓库根目录 agent-skill-map.json，把本仓库的 skills + 规则文档用软链安装到
-# Cursor / Hermes / OpenClaw / ~/.agents 等目录（不复制正文，避免双源维护）。
+# 读取仓库根目录 agent-skill-map.json，把本仓库的 skills + 映射内文档用软链安装到
+# Cursor / Hermes / OpenClaw / ~/.agents 等目录；各 skill 的 SKILL.md 复制到目标并改写内链。
 #
 # 用法：
 #   bash scripts/install-agent-skill-links.sh --targets cursor,hermes,openclaw,agents
@@ -115,8 +115,9 @@ def install_skill_md(src: pathlib.Path, dst: pathlib.Path):
         raise SystemExit(f"源文件不存在: {src}")
     dst.parent.mkdir(parents=True, exist_ok=True)
     text = src.read_text(encoding="utf-8")
-    text = text.replace("](../../../AW_品牌文案参考规则.md)", "](AW_品牌文案参考规则.md)")
-    text = text.replace("](../../../AW_品牌共通基石.md)", "](AW_品牌共通基石.md)")
+    for doc in docs:
+        fn = doc["file"]
+        text = text.replace(f"](../../../{fn})", f"]({fn})")
     if dry:
         print(f"[dry-run] write {dst} ({len(text)} bytes)")
     else:
