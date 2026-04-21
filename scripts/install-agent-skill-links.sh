@@ -29,6 +29,7 @@ usage() {
 
 --targets   逗号分隔：cursor | hermes | openclaw | agents
 --all       等同于 cursor,hermes,openclaw,agents
+--map       指定映射文件（默认：agent-skill-map.json）
 --dry-run   只打印将执行的命令，不写盘
 EOF
 }
@@ -37,6 +38,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --targets) TARGETS="${2:-}"; shift 2 ;;
     --all) TARGETS="cursor,hermes,openclaw,agents"; shift ;;
+    --map) MAP="${2:-}"; shift 2 ;;
     --dry-run) DRY_RUN=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "未知参数: $1" >&2; usage; exit 2 ;;

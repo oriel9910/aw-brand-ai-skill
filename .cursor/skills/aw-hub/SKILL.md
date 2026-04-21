@@ -3,9 +3,10 @@ name: aw-hub
 description: >-
   Routes ARCANE WARRIOR (AW) work across six skills: topic and copy direction
   (aw-topic-brief), short-form video scripts (aw-video-script), e-commerce hero
-  and detail-page creative (aw-listing-creative), product facts and specs
-  (aw-product), e-commerce hero image diagnosis (aw-listing-diagnosis), and
-  e-commerce detail page diagnosis (aw-detail-diagnosis).
+  and detail-page creative
+  (aw-listing-creative), product facts and specs (aw-product), e-commerce hero
+  image diagnosis (aw-listing-diagnosis), and e-commerce detail page diagnosis
+  (aw-detail-diagnosis).
   Use when the user mentions AW or ARCANE WARRIOR but the task type is unclear,
   asks what AW tools can do, or needs the right sub-skill.
 ---

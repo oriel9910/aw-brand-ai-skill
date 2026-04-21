@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "package": "aw-brand-ai-skill",
+  "description": "Maintainer map: installs internal iteration tooling + L3 evolution docs (single source of truth in this repo).",
+  "skills": [
+    { "id": "aw-hub", "source": ".cursor/skills/aw-hub" },
+    { "id": "aw-topic-brief", "source": ".cursor/skills/aw-topic-brief" },
+    { "id": "aw-copy-iterate", "source": ".cursor/skills/aw-copy-iterate" },
+    { "id": "aw-video-script", "source": ".cursor/skills/aw-video-script" },
+    { "id": "aw-listing-creative", "source": ".cursor/skills/aw-listing-creative" },
+    { "id": "aw-product", "source": ".cursor/skills/aw-product" },
+    { "id": "aw-listing-diagnosis", "source": ".cursor/skills/aw-listing-diagnosis" },
+    { "id": "aw-detail-diagnosis", "source": ".cursor/skills/aw-detail-diagnosis" }
+  ],
+  "documents": [
+    { "file": "AW_品牌共通基石.md", "source": "AW_品牌共通基石.md" },
+    { "file": "AW_品牌文案参考规则.md", "source": "AW_品牌文案参考规则.md" },
+    { "file": "AW_产品参数与SKU.md", "source": "AW_产品参数与SKU.md" },
+
+    { "file": "AW_文案素材库.md", "source": "AW_文案素材库.md" },
+    { "file": "AW_句式与禁区判定.md", "source": "AW_句式与禁区判定.md" },
+    { "file": "AW_概念保鲜机制.md", "source": "AW_概念保鲜机制.md" },
+    { "file": "AW_品牌人格画像.md", "source": "AW_品牌人格画像.md" },
+    { "file": "AW_品牌叙事弧线.md", "source": "AW_品牌叙事弧线.md" },
+    { "file": "AW_触点变奏规则.md", "source": "AW_触点变奏规则.md" }
+  ],
+  "targets": {
+    "cursor": {
+      "root": "~/.cursor/skills",
+      "layout": "flat",
+      "notes": "Cursor project skills remain .cursor/skills/ in repo; this installs global copies."
+    },
+    "hermes": {
+      "root": "~/.hermes/skills",
+      "layout": "category",
+      "category": "arcane-warrior",
+      "notes": "Hermes uses ~/.hermes/skills/<category>/<skill>/SKILL.md style paths."
+    },
+    "openclaw": {
+      "root": "~/.openclaw/skills",
+      "layout": "flat",
+      "notes": "OpenClaw managed/local skills: ~/.openclaw/skills (see docs.openclaw.ai/skills)."
+    },
+    "agents": {
+      "root": "~/.agents/skills",
+      "layout": "flat",
+      "notes": "Generic AgentSkills-style personal dir referenced by OpenClaw docs."
+    }
+  },
+  "custom_targets": []
+}
+
